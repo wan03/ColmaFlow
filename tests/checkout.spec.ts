@@ -41,6 +41,10 @@ test.describe('Colmado App Backend Tests', () => {
     await page.goto('/test-harness');
 
     // 3. Click Success Button
+    // Navigate to test harness
+    await page.goto('/test-harness');
+
+    // Click Success Button
     await page.click('#btn-fiado-success');
 
     // Wait for result
@@ -64,6 +68,10 @@ test.describe('Colmado App Backend Tests', () => {
     await page.goto('/test-harness');
 
     // 3. Click Fail Button
+    // Navigate to test harness
+    await page.goto('/test-harness');
+
+    // Click Fail Button
     await page.click('#btn-fiado-fail');
 
     // Wait for result
