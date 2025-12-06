@@ -12,6 +12,7 @@ create table profiles (
   id uuid references auth.users not null primary key,
   role user_role not null default 'customer',
   phone text,
+  full_name text,
   created_at timestamptz default now(),
   updated_at timestamptz default now()
 );

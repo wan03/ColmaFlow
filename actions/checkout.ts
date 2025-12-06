@@ -1,6 +1,7 @@
 'use server'
 
 import { createClient } from '@/utils/supabase/server'
+import { createAdminClient } from '@/utils/supabase/admin'
 
 interface OrderItem {
   product_id: string
@@ -17,11 +18,20 @@ interface OrderData {
 }
 
 export async function processOrder(orderData: OrderData) {
-  const supabase = createClient()
+  // Use admin client to bypass RLS for balance updates and order creation (if user is customer)
+  // Standard `createClient` would use the user's session, which might lack permissions
+  // to update `store_customer_relationships` (only owners can update).
+  const supabase = createAdminClient()
+  const userSupabase = createClient() // We still might want to check auth?
 
   const { store_id, customer_id, payment_method, total } = orderData
 
   try {
+    // Basic Auth Check
+    const { data: { user } } = await userSupabase.auth.getUser()
+    if (!user) throw new Error('Not authenticated')
+    if (user.id !== customer_id) throw new Error('Customer ID mismatch')
+
     // 1. Validate 'Fiado' Logic
     if (payment_method === 'fiado') {
       // a. Query relationship
@@ -62,6 +72,7 @@ export async function processOrder(orderData: OrderData) {
         throw new Error('Credit limit exceeded')
       }
 
+      // Optimistic/Careful Update using Admin Client
       // Optimistic/Careful Update:
       // We will assume that for this specific app, strict race-condition locking (like banking)
       // might be handled by the single-threaded nature of some setups or low concurrency for a single user.
@@ -101,6 +112,7 @@ export async function processOrder(orderData: OrderData) {
         })
 
       if (historyError) {
+        // Compensation
         // Critical: We updated balance but failed to log history.
         // In a real system, we'd need a compensation transaction (decrement balance).
         // Attempt compensation:

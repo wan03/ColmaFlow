@@ -23,13 +23,13 @@ VALUES
 ON CONFLICT (id) DO NOTHING;
 
 -- 2. Profiles
-INSERT INTO public.profiles (id, role, phone)
+INSERT INTO public.profiles (id, role, phone, full_name)
 VALUES
-  ('d0d8c19c-0b0d-4096-b0a6-123456789001', 'owner', '809-555-0101'), -- Juan
-  ('d0d8c19c-0b0d-4096-b0a6-123456789002', 'owner', '829-555-0202'), -- Maria
-  ('d0d8c19c-0b0d-4096-b0a6-123456789003', 'customer', '849-555-0303'), -- Pedro
-  ('d0d8c19c-0b0d-4096-b0a6-123456789004', 'customer', '809-555-0404'), -- Luisa
-  ('d0d8c19c-0b0d-4096-b0a6-123456789005', 'driver', '829-555-0505'); -- Carlos
+  ('d0d8c19c-0b0d-4096-b0a6-123456789001', 'owner', '809-555-0101', 'Juan El Colmadero'),
+  ('d0d8c19c-0b0d-4096-b0a6-123456789002', 'owner', '829-555-0202', 'Maria La Dura'),
+  ('d0d8c19c-0b0d-4096-b0a6-123456789003', 'customer', '849-555-0303', 'Pedro Cliente'),
+  ('d0d8c19c-0b0d-4096-b0a6-123456789004', 'customer', '809-555-0404', 'Luisa Compra'),
+  ('d0d8c19c-0b0d-4096-b0a6-123456789005', 'driver', '829-555-0505', 'Carlos Chofer');
 
 -- 3. Colmados
 -- Coordinates around Santo Domingo

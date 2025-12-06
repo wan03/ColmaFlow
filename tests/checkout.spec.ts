@@ -1,7 +1,8 @@
 import { test, expect } from '@playwright/test';
 import { createClient } from '@supabase/supabase-js';
 
-// Setup Supabase client for direct DB verification
+// Setup Supabase client for direct DB verification (Service Role not needed for public tables usually, but strict RLS might block)
+// We will use standard anon key for verification of public data.
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const supabase = createClient(supabaseUrl, supabaseKey);
@@ -29,6 +30,17 @@ test.describe('Colmado App Backend Tests', () => {
   });
 
   test('Fiado Transaction Success', async ({ page }) => {
+    // 1. Login as Pedro (Customer)
+    await page.goto('/login');
+    await page.fill('#email', 'pedro@cliente.com');
+    await page.fill('#password', 'password123');
+    await page.click('#login-btn');
+    await page.waitForText('Success', { selector: '#login-message' });
+
+    // 2. Navigate to test harness
+    await page.goto('/test-harness');
+
+    // 3. Click Success Button
     // Navigate to test harness
     await page.goto('/test-harness');
 
@@ -45,6 +57,17 @@ test.describe('Colmado App Backend Tests', () => {
   });
 
   test('Fiado Transaction Failure (Limit Exceeded)', async ({ page }) => {
+    // 1. Login as Pedro (Customer)
+    await page.goto('/login');
+    await page.fill('#email', 'pedro@cliente.com');
+    await page.fill('#password', 'password123');
+    await page.click('#login-btn');
+    await page.waitForText('Success', { selector: '#login-message' });
+
+    // 2. Navigate to test harness
+    await page.goto('/test-harness');
+
+    // 3. Click Fail Button
     // Navigate to test harness
     await page.goto('/test-harness');
 
